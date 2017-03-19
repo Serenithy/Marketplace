@@ -9,8 +9,9 @@ namespace Marketplace
 {
     class Persistencia
     {
-        public ToolStripButton tsbActive;
-        public ulong priceTotal = 0;
-        public List<Fila.ItemBuy> lista = new List<Fila.ItemBuy>();
+        public static ToolStripButton tsbActive;
+        public static ulong priceTotal = 0;
+        public static string balance = "";
+        public static List<Fila.ItemBuy> lista = new List<Fila.ItemBuy>();
     }
 }

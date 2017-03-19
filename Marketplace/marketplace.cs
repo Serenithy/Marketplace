@@ -222,6 +222,7 @@ namespace Marketplace
             }
             priceTotal += Convert.ToUInt64(itemBuy.getPrecioItem());
             ucPrecioBuy.setPrecio(Convert.ToString(priceTotal));
+            Persistencia.lista.Add(itemBuy);
             pnlListaBuy.Controls.Add(itemBuy);
         }
 
@@ -264,12 +265,23 @@ namespace Marketplace
         private void inicialize ()
         {
             // persistenciaEstado
+            Persistencia.tsbActive = tsbActive;
+            Persistencia.priceTotal = priceTotal;
+            Persistencia.balance = ucPrecio.getPrecio();
             this.Controls.Clear();
             InitializeComponent();
             // Cargar items
             loadItems();
             this.WindowState = FormWindowState.Normal;
+            tsbActive = Persistencia.tsbActive;
+            priceTotal = Persistencia.priceTotal;
+            ucPrecio.setPrecio(Persistencia.balance);
+            tsbActive = Persistencia.tsbActive;
             tsbSelected(tsbActive, false);
+            foreach (Fila.ItemBuy item in Persistencia.lista)
+            {
+                pnlListaBuy.Controls.Add(item);
+            }
         }
     }
 }
