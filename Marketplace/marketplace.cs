@@ -19,7 +19,6 @@ namespace Marketplace
         private readonly int mheightBuy = 50;
         private ToolStripButton tsbActive;
         private ulong priceTotal = 0;
-        // 
 
         public marketplace()
 
