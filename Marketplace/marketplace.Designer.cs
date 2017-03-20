@@ -63,13 +63,13 @@
             this.button2 = new System.Windows.Forms.Button();
             this.textBox1 = new System.Windows.Forms.TextBox();
             this.button1 = new System.Windows.Forms.Button();
-            this.button3 = new System.Windows.Forms.Button();
+            this.btnBuy = new System.Windows.Forms.Button();
             this.label2 = new System.Windows.Forms.Label();
             this.ucPrecioBuy = new Fila.ucPrecio();
             this.ucPrecio = new Fila.ucPrecio();
             this.toolTip1 = new System.Windows.Forms.ToolTip(this.components);
-            this.pnlListaBuy = new System.Windows.Forms.Panel();
             this.lblShoppingList = new System.Windows.Forms.Label();
+            this.pnlListaBuy = new System.Windows.Forms.Panel();
             this.toolStrip.SuspendLayout();
             this.panel2.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.pictureBox1)).BeginInit();
@@ -126,6 +126,7 @@
             this.tsbUndo.Image = global::Marketplace.Menu.Deshacer;
             resources.ApplyResources(this.tsbUndo, "tsbUndo");
             this.tsbUndo.Name = "tsbUndo";
+            this.tsbUndo.Click += new System.EventHandler(this.tsbUndo_Click);
             // 
             // tsbRedo
             // 
@@ -133,6 +134,7 @@
             this.tsbRedo.Image = global::Marketplace.Menu.Rehacer;
             resources.ApplyResources(this.tsbRedo, "tsbRedo");
             this.tsbRedo.Name = "tsbRedo";
+            this.tsbRedo.Click += new System.EventHandler(this.tsbRedo_Click);
             // 
             // toolStripSeparator1
             // 
@@ -355,15 +357,15 @@
             this.toolTip1.SetToolTip(this.button1, resources.GetString("button1.ToolTip"));
             this.button1.UseVisualStyleBackColor = false;
             // 
-            // button3
+            // btnBuy
             // 
-            resources.ApplyResources(this.button3, "button3");
-            this.button3.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(19)))), ((int)(((byte)(17)))), ((int)(((byte)(11)))));
-            this.button3.ForeColor = System.Drawing.Color.White;
-            this.button3.Name = "button3";
-            this.toolTip1.SetToolTip(this.button3, resources.GetString("button3.ToolTip"));
-            this.button3.UseVisualStyleBackColor = false;
-            this.button3.Click += new System.EventHandler(this.button3_Click);
+            resources.ApplyResources(this.btnBuy, "btnBuy");
+            this.btnBuy.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(19)))), ((int)(((byte)(17)))), ((int)(((byte)(11)))));
+            this.btnBuy.ForeColor = System.Drawing.Color.White;
+            this.btnBuy.Name = "btnBuy";
+            this.toolTip1.SetToolTip(this.btnBuy, resources.GetString("btnBuy.ToolTip"));
+            this.btnBuy.UseVisualStyleBackColor = false;
+            this.btnBuy.Click += new System.EventHandler(this.btnBuy_Click);
             // 
             // label2
             // 
@@ -383,6 +385,15 @@
             resources.ApplyResources(this.ucPrecio, "ucPrecio");
             this.ucPrecio.Name = "ucPrecio";
             // 
+            // lblShoppingList
+            // 
+            this.lblShoppingList.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(19)))), ((int)(((byte)(17)))), ((int)(((byte)(11)))));
+            this.lblShoppingList.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
+            resources.ApplyResources(this.lblShoppingList, "lblShoppingList");
+            this.lblShoppingList.ForeColor = System.Drawing.Color.White;
+            this.lblShoppingList.Name = "lblShoppingList";
+            this.toolTip1.SetToolTip(this.lblShoppingList, resources.GetString("lblShoppingList.ToolTip"));
+            // 
             // pnlListaBuy
             // 
             this.pnlListaBuy.AllowDrop = true;
@@ -393,15 +404,6 @@
             this.pnlListaBuy.DragDrop += new System.Windows.Forms.DragEventHandler(this.pnlListaBuy_DragDrop);
             this.pnlListaBuy.DragEnter += new System.Windows.Forms.DragEventHandler(this.pnlListaBuy_DragEnter);
             // 
-            // lblShoppingList
-            // 
-            this.lblShoppingList.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(19)))), ((int)(((byte)(17)))), ((int)(((byte)(11)))));
-            this.lblShoppingList.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
-            resources.ApplyResources(this.lblShoppingList, "lblShoppingList");
-            this.lblShoppingList.ForeColor = System.Drawing.Color.White;
-            this.lblShoppingList.Name = "lblShoppingList";
-            this.toolTip1.SetToolTip(this.lblShoppingList, resources.GetString("lblShoppingList.ToolTip"));
-            // 
             // marketplace
             // 
             resources.ApplyResources(this, "$this");
@@ -409,7 +411,7 @@
             this.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(46)))), ((int)(((byte)(39)))), ((int)(((byte)(27)))));
             this.Controls.Add(this.label2);
             this.Controls.Add(this.ucPrecioBuy);
-            this.Controls.Add(this.button3);
+            this.Controls.Add(this.btnBuy);
             this.Controls.Add(this.ucPrecio);
             this.Controls.Add(this.pnlListaBuy);
             this.Controls.Add(this.pnlLista);
@@ -460,7 +462,7 @@
         private System.Windows.Forms.Button button2;
         private System.Windows.Forms.TextBox textBox1;
         private Fila.ucPrecio ucPrecio;
-        private System.Windows.Forms.Button button3;
+        private System.Windows.Forms.Button btnBuy;
         private Fila.ucPrecio ucPrecioBuy;
         private System.Windows.Forms.Label label2;
         private System.Windows.Forms.ToolTip toolTip1;

@@ -12,14 +12,35 @@ using System.Windows.Forms;
 
 namespace Marketplace
 {
+    /// <summary>
+    /// Clase del formulario principal
+    /// </summary>
     public partial class marketplace : Form
     {
-
+        /// <summary>
+        /// Alto del UserControl ListaFila
+        /// </summary>
         private readonly int mheight = 61;
+        /// <summary>
+        /// Alto del UserControl ItemBuy
+        /// </summary>
         private readonly int mheightBuy = 50;
+        /// <summary>
+        /// ToolStripButton activo
+        /// </summary>
         private ToolStripButton tsbActive;
-        private ulong priceTotal = 0;
+        /// <summary>
+        /// Precio total de compra
+        /// </summary>
+        private long priceTotal = 0;
+        /// <summary>
+        /// N veces que se ha borrado un item del carrito de la compra
+        /// </summary>
+        private int undoCount = 0;
 
+        /// <summary>
+        /// Constructor del formulario principal
+        /// </summary>
         public marketplace()
 
         {
@@ -28,8 +49,10 @@ namespace Marketplace
             // Menu Item por defecto
             menuItemDefective();
 
-            // 
+            // Establece los fondos, y deshabilida los botones deshacer y rehacer
             ucPrecio.setPrecio("5000000");
+            tsbUndo.Enabled = false;
+            tsbRedo.Enabled = false;
 
             // Cargar items
             loadItems();
@@ -191,11 +214,22 @@ namespace Marketplace
             pnlLista.Controls.Add(fila);
         }
 
+        /// <summary>
+        /// Determina que el efecto de arrastrar sea de tipo copia, es decir
+        /// los datos de origen se copian al destino
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
         private void pnlListaBuy_DragEnter(object sender, DragEventArgs e)
         {
             e.Effect = DragDropEffects.Copy; 
         }
 
+        /// <summary>
+        /// Creamos con los datos arrastrados un UserControl, y se lo añadimos al panel de compra
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
         private void pnlListaBuy_DragDrop(object sender, DragEventArgs e)
         {
             int n = pnlListaBuy.Controls.Count;
@@ -220,25 +254,38 @@ namespace Marketplace
                         break;
                 }
             }
-            priceTotal += Convert.ToUInt64(itemBuy.getPrecioItem());
+            priceTotal += Convert.ToInt64(itemBuy.getPrecioItem());
             ucPrecioBuy.setPrecio(Convert.ToString(priceTotal));
             Persistencia.lista.Add(itemBuy);
+            tsbUndo.Enabled = true;
             pnlListaBuy.Controls.Add(itemBuy);
         }
 
-        private void button3_Click(object sender, EventArgs e)
+        /// <summary>
+        /// Boton de compra, comprobamos que se puede realizar la compra, y en ese caso, restamos de
+        /// los fondos, y eliminamos el objeto del carrito
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
+        private void btnBuy_Click(object sender, EventArgs e)
         {
-            ulong precio = Convert.ToUInt64(ucPrecio.getPrecio()) - Convert.ToUInt64(ucPrecioBuy.getPrecio());
+            long precio = Convert.ToInt64(ucPrecio.getPrecio()) - Convert.ToInt64(ucPrecioBuy.getPrecio());
             if (precio > 0)
             {
                 ucPrecio.setPrecio(Convert.ToString(precio));
-                ucPrecioBuy.setPrecio("0");
+                priceTotal = 0;
+                ucPrecioBuy.setPrecio(Convert.ToString(priceTotal));
                 Label shopList = lblShoppingList;
                 pnlListaBuy.Controls.Clear();
                 pnlListaBuy.Controls.Add(shopList);
             }
         }
 
+        /// <summary>
+        /// Establece el idioma al ingles
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
         private void tsmiIngles_Click(object sender, EventArgs e)
         {
             try
@@ -250,6 +297,11 @@ namespace Marketplace
             inicialize();
         }
 
+        /// <summary>
+        /// Establece el idioma al Español
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
         private void tsmiEspañol_Click(object sender, EventArgs e)
         {
             try
@@ -262,25 +314,77 @@ namespace Marketplace
             inicialize();
         }
 
+        /// <summary>
+        /// Guarda el estado de los componentes necesarios, para al restablecer el idioma
+        /// la interfaz quede como estaba
+        /// </summary>
         private void inicialize ()
         {
             // persistenciaEstado
-            Persistencia.tsbActive = tsbActive;
+            Persistencia.tsbActive = tsbActive.Name;
             Persistencia.priceTotal = priceTotal;
             Persistencia.balance = ucPrecio.getPrecio();
+            Persistencia.tsbRedo = tsbRedo.Enabled;
+            Persistencia.tsbUndo = tsbUndo.Enabled;
+            Persistencia.undoCount = undoCount;
             this.Controls.Clear();
             InitializeComponent();
             // Cargar items
             loadItems();
             this.WindowState = FormWindowState.Normal;
-            tsbActive = Persistencia.tsbActive;
+            foreach (ToolStripItem item in toolStrip.Items)
+            {
+                if (item is ToolStripButton)
+                {
+                    if (item.Name == Persistencia.tsbActive)
+                    {
+                        tsbActive = (ToolStripButton)item;
+                    }
+                }
+            }
             priceTotal = Persistencia.priceTotal;
             ucPrecio.setPrecio(Persistencia.balance);
-            tsbActive = Persistencia.tsbActive;
             tsbSelected(tsbActive, false);
-            foreach (Fila.ItemBuy item in Persistencia.lista)
+            tsbRedo.Enabled = Persistencia.tsbRedo;
+            tsbUndo.Enabled = Persistencia.tsbUndo;
+            undoCount = Persistencia.undoCount;
+            for (int i = 0; i < Persistencia.lista.Count-undoCount; i++)
             {
-                pnlListaBuy.Controls.Add(item);
+                pnlListaBuy.Controls.Add(Persistencia.lista[i]);
+            }
+        }
+        
+        /// <summary>
+        /// Deshacer - Borra del carrito de compra los items añadidos
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
+        private void tsbUndo_Click(object sender, EventArgs e)
+        {
+            pnlListaBuy.Controls.Remove(Persistencia.lista[Persistencia.lista.Count-undoCount-1]);
+            ucPrecioBuy.setPrecio(Convert.ToString(Convert.ToInt64(ucPrecioBuy.getPrecio()) - Convert.ToInt64(Persistencia.lista[Persistencia.lista.Count - undoCount - 1].getPrecioItem())));
+            if (pnlListaBuy.Controls.Count == 1)
+            {
+                tsbUndo.Enabled = false;
+            }
+            tsbRedo.Enabled = true;
+            ++undoCount;
+        }
+        
+        /// <summary>
+        /// Rehacer - Añade al carrito de compra los items borrados
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
+        private void tsbRedo_Click(object sender, EventArgs e)
+        {
+            pnlListaBuy.Controls.Add(Persistencia.lista[Persistencia.lista.Count - undoCount]);
+            ucPrecioBuy.setPrecio(Convert.ToString(Convert.ToInt64(ucPrecioBuy.getPrecio()) + Convert.ToInt64(Persistencia.lista[Persistencia.lista.Count - undoCount].getPrecioItem())));
+            --undoCount;
+            if (undoCount == 0)
+            {
+                tsbRedo.Enabled = false;
+                tsbUndo.Enabled = true;
             }
         }
     }

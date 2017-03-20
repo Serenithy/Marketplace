@@ -7,8 +7,15 @@ using System.Threading.Tasks;
 
 namespace Marketplace
 {
+    /// <summary>
+    /// Clase donde se realizan las altas defectivas
+    /// </summary>
     class AltasDefectivas
     {
+        /// <summary>
+        /// Metodo que crea y devuelve la coleccion donde estan creados todos los items
+        /// </summary>
+        /// <returns>Item [] - Coleccion donde se guardan todos los objetos Item</returns>
         public static Item [] altasProductos()
         {
             return new Item [] {
